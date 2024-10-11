@@ -47,9 +47,11 @@ class PostResource extends Resource
                             TextInput::make('title')->required(),
                             TextInput::make('slug')->required(),
                             Select::make('category_id')
-                                ->label('Category')
-                                ->options(Category::orderBy('name', 'asc')->pluck('name', 'id'))
-                                ->required(),
+                                  ->label('Category')
+                                  ->relationship('category', 'name')
+                                  ->searchable()
+                                  //->options(Category::orderBy('name', 'asc')->pluck('name', 'id'))
+                                  ->required(),
                             ColorPicker::make('color')->required(),
                             MarkdownEditor::make('content')->required()
                         ])
@@ -64,20 +66,45 @@ class PostResource extends Resource
                         TagsInput::make('tags')->required(),
                         Checkbox::make('published')
                     ])
-            ])->columns(2);
+            ])
+            ->columns(2);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('title'),
-                TextColumn::make('slug'),
-                TextColumn::make('category.name'),
-                ColorColumn::make('color'),
-                ImageColumn::make('thumbnail'),
-                TextColumn::make('tags'),
+                TextColumn::make('id')
+                          ->sortable()
+                          ->toggleable(isToggledHiddenByDefault:true),
+                TextColumn::make('title')
+                          ->sortable()
+                          ->searchable()
+                          ->toggleable(),
+                TextColumn::make('slug')
+                          ->sortable()
+                          ->searchable()
+                          ->toggleable(),
+                TextColumn::make('category.name')
+                          ->sortable()
+                          ->searchable()
+                          ->toggleable(),
+                ColorColumn::make('color')
+                           ->toggleable(),
+                ImageColumn::make('thumbnail')
+                           ->toggleable(),
+                TextColumn::make('tags')
+                          ->toggleable(),
                 CheckboxColumn::make('published')
+                              ->sortable()
+                              ->searchable()
+                              ->toggleable(),
+                TextColumn::make('created_at')
+                          ->label('Published On')
+                          ->date()
+                          ->sortable()
+                          ->searchable()
+                          ->toggleable(),                        
             ])
             ->filters([
                 //
