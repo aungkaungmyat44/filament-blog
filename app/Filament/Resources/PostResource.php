@@ -9,8 +9,12 @@ use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -36,17 +40,30 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required(),
-                TextInput::make('slug')->required(),
-                Select::make('category_id')
-                    ->label('Category')
-                    ->options(Category::orderBy('name', 'asc')->pluck('name', 'id'))
-                    ->required(),
-                ColorPicker::make('color')->required(),
-                MarkdownEditor::make('content')->required(),
-                TagsInput::make('tags')->required(),
-                FileUpload::make('thumbnail')->disk('public')->directory('thumbnails'),
-                Checkbox::make('published')
+                Section::make('Content')
+                        ->description('add post\'s content here')
+                        ->collapsible()
+                        ->schema([
+                            TextInput::make('title')->required(),
+                            TextInput::make('slug')->required(),
+                            Select::make('category_id')
+                                ->label('Category')
+                                ->options(Category::orderBy('name', 'asc')->pluck('name', 'id'))
+                                ->required(),
+                            ColorPicker::make('color')->required(),
+                            MarkdownEditor::make('content')->required()
+                        ])
+                ->columnSpan(1),
+                Group::make()
+                    ->schema([
+                        Section::make('Meta')
+                            ->schema([
+                                FileUpload::make('thumbnail')->disk('public')->directory('thumbnails')
+                            ])
+                            ->columnSpan(1),
+                        TagsInput::make('tags')->required(),
+                        Checkbox::make('published')
+                    ])
             ])->columns(2);
     }
 
@@ -67,6 +84,7 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
