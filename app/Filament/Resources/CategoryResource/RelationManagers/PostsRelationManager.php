@@ -83,10 +83,10 @@ class PostsRelationManager extends RelationManager
                           ->toggleable(),   
             ])
             ->filters([
-                //
+                Tables\Actions\CreateAction::make()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                //
             ])
             ->actions([
                 //

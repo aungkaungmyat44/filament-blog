@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
+use App\Filament\Resources\PostResource\RelationManagers\AuthorsRelationManager;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Forms;
@@ -58,13 +59,27 @@ class PostResource extends Resource
                 ->columnSpan(1),
                 Group::make()
                     ->schema([
+                        Section::make('Image')
+                        ->schema([
+                            FileUpload::make('thumbnail')->disk('public')->directory('thumbnails')
+                        ])
+                        ->columnSpan(1),
                         Section::make('Meta')
-                            ->schema([
-                                FileUpload::make('thumbnail')->disk('public')->directory('thumbnails')
-                            ])
-                            ->columnSpan(1),
-                        TagsInput::make('tags')->required(),
-                        Checkbox::make('published')
+                        ->schema([
+                            TagsInput::make('tags')->required(),
+                            Checkbox::make('published')
+                        ])
+                        ->columnSpan(1),
+                        /*
+                        Section::make('Author')
+                        ->schema([
+                            Select::make('authors')
+                                  ->searchable(condition:false)
+                                  ->multiple()
+                                  ->relationship('authors', 'name')
+                        ])
+                        ->columnSpan(1),
+                        */
                     ])
             ])
             ->columns(2);
@@ -123,7 +138,7 @@ class PostResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuthorsRelationManager::class
         ];
     }
 
