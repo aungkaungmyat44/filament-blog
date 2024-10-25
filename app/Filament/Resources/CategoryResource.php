@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
 {
@@ -22,13 +23,29 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
+    protected static ?string $navigationGroup = 'Blog';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $modelLabel = 'Games Category';
+
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('name')->rules(['min:3', 'max:30'])->required(),
-                TextInput::make('slug')->rules(['min:3', 'max:30'])->required()
-            ])->columns(2);
+        ->schema([
+            TextInput::make('name')
+                ->rules(['min:3', 'max:30'])
+                ->required()
+                ->live(onBlur: true)
+                ->afterStateUpdated(function (string $operation, string $state, Forms\Set $set) {
+                    if ($operation == 'edit') {
+                        return;
+                    }
+                    $set('slug', Str::slug($state));
+                }),
+            TextInput::make('slug')->rules(['min:3', 'max:30'])->required()
+        ])
+        ->columns(2);
     }
 
     public static function table(Table $table): Table
