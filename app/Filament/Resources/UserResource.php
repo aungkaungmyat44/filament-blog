@@ -37,7 +37,16 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email'),
-                TextColumn::make('created_at')->dateTime('Y-m-d')
+                TextColumn::make('created_at')
+                ->badge()
+                ->color(function (string $state) {
+                    // if ($state == 'example')
+                    // match () {
+                        // 'hello' => 'info'
+                    //}
+                    return 'info';
+                })
+                ->dateTime('Y-m-d')
             ])
             ->filters([
                 //

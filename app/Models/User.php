@@ -16,8 +16,8 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return false;
-        // can write any rule, policy, attribute, role and permission
+        // can write any rule, policy, attribute, role and permission [only need to return : true or 1]
+        return true;
     }
 
     /**
