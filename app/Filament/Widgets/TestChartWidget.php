@@ -3,24 +3,32 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 
 class TestChartWidget extends ChartWidget
 {
+    use InteractsWithPageFilters; // to responsive with search filters
+
     protected static ?string $heading = 'User Chart';
 
     protected int | string | array $columnSpan = 1;
 
     protected function getData(): array
     {
+        $startDate = $this->filters['startDate'] ?? null;
+        $endDate = $this->filters['endDate'] ?? null;
+        $name = $this->filters['name'] ?? null;
+
         $data = Trend::model(User::class)
                     ->between(
-                        start: now()->subWeek(6),
-                        end: now(),
+                        start: $startDate ? Carbon::parse($startDate) :now()->subMonth(6),
+                        end: $endDate ? Carbon::parse($endDate) :now()
                     )
-                    ->perWeek()
+                    ->perMonth()
                     ->count();
         
         return [
