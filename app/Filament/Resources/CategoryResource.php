@@ -29,6 +29,8 @@ class CategoryResource extends Resource
 
     protected static ?string $modelLabel = 'Games Category';
 
+    //protected static ?string $navigationParentItem = 'Games Category';
+
     public static function form(Form $form): Form
     {
         return $form
